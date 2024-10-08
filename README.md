@@ -1,0 +1,1 @@
+The backend for Pinpoint, a personalized travel map application that allows users to log their travel experiences. This RESTful API manages location pins and image storage, enabling users to create a visual record of their adventures. Users can add location pins, upload images, and retrieve or update their travel entries.
