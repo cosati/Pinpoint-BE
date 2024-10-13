@@ -18,28 +18,29 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RequestMapping("/fileData")
 public class FileDataController {
-	
-	private final String FOLDER_PATH = "C:/Users/Cosati/Documents/mapImages";
-	
-	@GetMapping("/images/{filename}")
-	public ResponseEntity<FileUrlResource> getImage(@PathVariable("filename") String filename) {
-		try {
-			Path filePath = Paths.get(FOLDER_PATH).resolve(filename).normalize();
-			FileUrlResource resource = new FileUrlResource(filePath.toString());
-			
-			if (!resource.exists()) {
-				return ResponseEntity.notFound().build();
-			}
-			
-			String contentType = Files.probeContentType(filePath);
-			
-			return ResponseEntity.ok()
-					.contentType(MediaType.parseMediaType(contentType))
-					.header(HttpHeaders.CONTENT_DISPOSITION, 
-							"inline; filename=\"" + resource.getFilename() + "\"")
-					.body(resource);
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(null);
-		}
-	}
+
+  private final String FOLDER_PATH = "C:/Users/Cosati/Documents/mapImages";
+
+  @GetMapping("/images/{filename}")
+  public ResponseEntity<FileUrlResource> getImage(@PathVariable("filename") String filename) {
+    try {
+      Path filePath = Paths.get(FOLDER_PATH).resolve(filename).normalize();
+      FileUrlResource resource = new FileUrlResource(filePath.toString());
+
+      if (!resource.exists()) {
+        return ResponseEntity.notFound().build();
+      }
+
+      String contentType = Files.probeContentType(filePath);
+
+      return ResponseEntity.ok()
+          .contentType(MediaType.parseMediaType(contentType))
+          .header(
+              HttpHeaders.CONTENT_DISPOSITION,
+              "inline; filename=\"" + resource.getFilename() + "\"")
+          .body(resource);
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(null);
+    }
+  }
 }

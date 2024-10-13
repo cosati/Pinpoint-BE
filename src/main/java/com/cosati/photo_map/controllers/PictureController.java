@@ -25,52 +25,48 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 @CrossOrigin
 public class PictureController {
-	
-	@Autowired
-	private PictureRepository repository;
-	
-	@Autowired
-	private PictureService pictureService;
-	
-	@GetMapping("/pictures")
-	public ResponseEntity<List<PictureDTO>> getPictures() {
-		return ResponseEntity.ok(
-				repository.findAll()
-					.stream()
-					.map(picture -> pictureService.convertToDTO(picture))
-					.collect(Collectors.toList()));
-	}
 
-	@GetMapping("/picture/{id}")
-	public ResponseEntity<PictureDTO> getPictureById(@PathVariable("id") Long id) {
-		Optional<Picture> picture = repository.findById(id);
-		if (picture.isPresent()) {
-			return ResponseEntity.ok(
-					pictureService.convertToDTO(picture.get()));
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-	
-	@PostMapping("/addPicture")
-	public ResponseEntity<PictureDTO> addPicture(
-			@RequestParam("picture") String pictureJson,
-			@RequestParam("file") MultipartFile file) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		Picture picture;
-		try {
-			picture = objectMapper.readValue(pictureJson, Picture.class);
-		} catch (JsonProcessingException e) {
-	        return ResponseEntity.badRequest().build();
-	    }
-		return ResponseEntity.ok(
-				pictureService.convertToDTO(
-						pictureService.savePictureWithImage(picture, file)));
-	}
-	
-	@DeleteMapping("/picture/{id}")
-	public ResponseEntity<Void> deletePicture(@PathVariable("id") Long id) {
-		repository.deleteById(id);
-		return ResponseEntity.noContent().build();
-	}
+  @Autowired private PictureRepository repository;
+
+  @Autowired private PictureService pictureService;
+
+  @GetMapping("/pictures")
+  public ResponseEntity<List<PictureDTO>> getPictures() {
+    return ResponseEntity.ok(
+        repository
+            .findAll()
+            .stream()
+            .map(picture -> pictureService.convertToDTO(picture))
+            .collect(Collectors.toList()));
+  }
+
+  @GetMapping("/picture/{id}")
+  public ResponseEntity<PictureDTO> getPictureById(@PathVariable("id") Long id) {
+    Optional<Picture> picture = repository.findById(id);
+    if (picture.isPresent()) {
+      return ResponseEntity.ok(pictureService.convertToDTO(picture.get()));
+    } else {
+      return ResponseEntity.notFound().build();
+    }
+  }
+
+  @PostMapping("/addPicture")
+  public ResponseEntity<PictureDTO> addPicture(
+      @RequestParam("picture") String pictureJson, @RequestParam("file") MultipartFile file) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    Picture picture;
+    try {
+      picture = objectMapper.readValue(pictureJson, Picture.class);
+    } catch (JsonProcessingException e) {
+      return ResponseEntity.badRequest().build();
+    }
+    return ResponseEntity.ok(
+        pictureService.convertToDTO(pictureService.savePictureWithImage(picture, file)));
+  }
+
+  @DeleteMapping("/picture/{id}")
+  public ResponseEntity<Void> deletePicture(@PathVariable("id") Long id) {
+    repository.deleteById(id);
+    return ResponseEntity.noContent().build();
+  }
 }
