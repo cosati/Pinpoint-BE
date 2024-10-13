@@ -19,49 +19,48 @@ import lombok.Data;
 @Builder
 @Table(name = "geolocations")
 public class Geolocation {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-	
-	@Column(name = "longitude", nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private long id;
 
-    @Column(name = "latitude", nullable = false, precision = 8, scale = 6)
-    private BigDecimal latitude;
-    
-    @OneToMany(mappedBy = "geolocation", fetch = FetchType.LAZY)
-    private List<Picture> pictures;
+  @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
+  private BigDecimal longitude;
 
-	public long getId() {
-		return id;
-	}
+  @Column(name = "latitude", nullable = false, precision = 8, scale = 6)
+  private BigDecimal latitude;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  @OneToMany(mappedBy = "geolocation", fetch = FetchType.LAZY)
+  private List<Picture> pictures;
 
-	public BigDecimal getLongitude() {
-		return longitude;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public void setLongitude(BigDecimal longitude) {
-		this.longitude = longitude;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	public BigDecimal getLatitude() {
-		return latitude;
-	}
+  public BigDecimal getLongitude() {
+    return longitude;
+  }
 
-	public void setLatitude(BigDecimal latitude) {
-		this.latitude = latitude;
-	}
+  public void setLongitude(BigDecimal longitude) {
+    this.longitude = longitude;
+  }
 
-	public List<Picture> getPictures() {
-		return pictures;
-	}
+  public BigDecimal getLatitude() {
+    return latitude;
+  }
 
-	public void setPictures(List<Picture> pictures) {
-		this.pictures = pictures;
-	}
-    
+  public void setLatitude(BigDecimal latitude) {
+    this.latitude = latitude;
+  }
+
+  public List<Picture> getPictures() {
+    return pictures;
+  }
+
+  public void setPictures(List<Picture> pictures) {
+    this.pictures = pictures;
+  }
 }

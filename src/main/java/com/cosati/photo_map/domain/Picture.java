@@ -23,73 +23,73 @@ import lombok.Data;
 @Builder
 @Table(name = "pictures")
 public class Picture {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-	
-	@Column(name = "title", nullable = false)
-	private String title;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private long id;
 
-	@Column(name = "description", nullable = false)
-	private String description;
-    
-    @Column(name = "date_taken")
-    @Temporal(TemporalType.DATE)
-    private Date dateTaken;
-    
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "geolocation_id")
-    private Geolocation geolocation;
-    
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "image_file_id", referencedColumnName = "id")
-    private FileData fileData;
+  @Column(name = "title", nullable = false)
+  private String title;
 
-	public String getTitle() {
-		return title;
-	}
+  @Column(name = "description", nullable = false)
+  private String description;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  @Column(name = "date_taken")
+  @Temporal(TemporalType.DATE)
+  private Date dateTaken;
 
-	public long getId() {
-		return id;
-	}
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "geolocation_id")
+  private Geolocation geolocation;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "image_file_id", referencedColumnName = "id")
+  private FileData fileData;
 
-	public Date getDateTaken() {
-		return dateTaken;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public void setDateTaken(Date dateTaken) {
-		this.dateTaken = dateTaken;
-	}
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-	public Geolocation getGeolocation() {
-		return geolocation;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setGeolocation(Geolocation geolocation) {
-		this.geolocation = geolocation;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public FileData getFileData() {
-		return fileData;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public void setFileData(FileData fileData) {
-		this.fileData = fileData;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public Date getDateTaken() {
+    return dateTaken;
+  }
+
+  public void setDateTaken(Date dateTaken) {
+    this.dateTaken = dateTaken;
+  }
+
+  public Geolocation getGeolocation() {
+    return geolocation;
+  }
+
+  public void setGeolocation(Geolocation geolocation) {
+    this.geolocation = geolocation;
+  }
+
+  public FileData getFileData() {
+    return fileData;
+  }
+
+  public void setFileData(FileData fileData) {
+    this.fileData = fileData;
+  }
 }
