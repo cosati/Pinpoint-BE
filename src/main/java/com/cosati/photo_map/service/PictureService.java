@@ -16,41 +16,35 @@ import com.cosati.photo_map.repository.PictureRepository;
 
 @Service
 public class PictureService {
-	
-	@Autowired
-	private PictureRepository pictureRepository;
-	
-	@Autowired
-	private StorageService storageService;
-	
-	public Picture savePictureWithImage(Picture picture, MultipartFile file) {
-		try {
-			FileData fileData = storageService.uploadImageToFileSystem(file);
-			picture.setFileData(fileData);
-		} catch (IOException e) {
-			return null;
-		}
-		return pictureRepository.save(picture);
-		
-	}
-	
-	public PictureDTO convertToDTO(Picture picture) {
-		Geolocation geolocation = picture.getGeolocation();
-		GeolocationDTO geolocationDTO = 
-				new GeolocationDTO(
-						geolocation.getId(), 
-						geolocation.getLongitude(), 
-						geolocation.getLatitude());
-		
-		FileDataDTO fileDataDto = 
-				storageService.convertToDTO(picture.getFileData());
-		
-		return new PictureDTO(
-				picture.getId(), 
-				picture.getTitle(), 
-				picture.getDescription(), 
-				picture.getDateTaken(), 
-				geolocationDTO,
-				fileDataDto);
-	}
+
+  @Autowired private PictureRepository pictureRepository;
+
+  @Autowired private StorageService storageService;
+
+  public Picture savePictureWithImage(Picture picture, MultipartFile file) {
+    try {
+      FileData fileData = storageService.uploadImageToFileSystem(file);
+      picture.setFileData(fileData);
+    } catch (IOException e) {
+      return null;
+    }
+    return pictureRepository.save(picture);
+  }
+
+  public PictureDTO convertToDTO(Picture picture) {
+    Geolocation geolocation = picture.getGeolocation();
+    GeolocationDTO geolocationDTO =
+        new GeolocationDTO(
+            geolocation.getId(), geolocation.getLongitude(), geolocation.getLatitude());
+
+    FileDataDTO fileDataDto = storageService.convertToDTO(picture.getFileData());
+
+    return new PictureDTO(
+        picture.getId(),
+        picture.getTitle(),
+        picture.getDescription(),
+        picture.getDateTaken(),
+        geolocationDTO,
+        fileDataDto);
+  }
 }
