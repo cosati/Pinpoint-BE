@@ -6,6 +6,4 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import com.cosati.photo_map.domain.Picture;
 
 @RestResource
-public interface PictureRepository extends JpaRepository<Picture, Long> {
-
-}
+public interface PictureRepository extends JpaRepository<Picture, Long> {}

@@ -9,5 +9,5 @@ import com.cosati.photo_map.domain.FileData;
 
 @RestResource
 public interface FileDataRepository extends JpaRepository<FileData, Long> {
-	Optional<FileData> findByName(String fileName);
+  Optional<FileData> findByName(String fileName);
 }
