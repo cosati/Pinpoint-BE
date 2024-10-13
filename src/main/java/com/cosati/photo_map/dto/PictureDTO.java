@@ -1,6 +1,7 @@
 package com.cosati.photo_map.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class PictureDTO {
 	private long id;
@@ -72,5 +73,24 @@ public class PictureDTO {
 
 	public void setFileData(FileDataDTO fileData) {
 		this.fileData = fileData;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dateTaken, description, fileData, geolocation, id, title);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PictureDTO other = (PictureDTO) obj;
+		return Objects.equals(dateTaken, other.dateTaken) && Objects.equals(description, other.description)
+				&& Objects.equals(fileData, other.fileData) && Objects.equals(geolocation, other.geolocation)
+				&& id == other.id && Objects.equals(title, other.title);
 	}
 }

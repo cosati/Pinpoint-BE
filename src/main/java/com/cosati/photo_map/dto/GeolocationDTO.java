@@ -1,6 +1,7 @@
 package com.cosati.photo_map.dto;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class GeolocationDTO {
 	private long id;
@@ -36,5 +37,22 @@ public class GeolocationDTO {
 
 	public void setLatitude(BigDecimal latitude) {
 		this.latitude = latitude;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, latitude, longitude);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeolocationDTO other = (GeolocationDTO) obj;
+		return id == other.id && Objects.equals(latitude, other.latitude) && Objects.equals(longitude, other.longitude);
 	}
 }

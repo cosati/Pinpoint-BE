@@ -1,5 +1,10 @@
 package com.cosati.photo_map.dto;
 
+import java.util.Objects;
+
+import lombok.Builder;
+
+@Builder
 public class FileDataDTO {
 	private long id;
 	private String filename;
@@ -43,5 +48,23 @@ public class FileDataDTO {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(filePath, filename, id, url);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FileDataDTO other = (FileDataDTO) obj;
+		return Objects.equals(filePath, other.filePath) && Objects.equals(filename, other.filename) && id == other.id
+				&& Objects.equals(url, other.url);
 	}
 }
