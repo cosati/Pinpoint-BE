@@ -4,55 +4,54 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class GeolocationDTO {
-	private long id;
-	private BigDecimal longitude;
-	private BigDecimal latitude;
-	
-	public GeolocationDTO(long id, BigDecimal longitude, BigDecimal latitude) {
-		super();
-		this.id = id;
-		this.longitude = longitude;
-		this.latitude = latitude;
-	}
+  private long id;
+  private BigDecimal longitude;
+  private BigDecimal latitude;
 
-	public long getId() {
-		return id;
-	}
+  public GeolocationDTO(long id, BigDecimal longitude, BigDecimal latitude) {
+    super();
+    this.id = id;
+    this.longitude = longitude;
+    this.latitude = latitude;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public BigDecimal getLongitude() {
-		return longitude;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	public void setLongitude(BigDecimal longitude) {
-		this.longitude = longitude;
-	}
+  public BigDecimal getLongitude() {
+    return longitude;
+  }
 
-	public BigDecimal getLatitude() {
-		return latitude;
-	}
+  public void setLongitude(BigDecimal longitude) {
+    this.longitude = longitude;
+  }
 
-	public void setLatitude(BigDecimal latitude) {
-		this.latitude = latitude;
-	}
+  public BigDecimal getLatitude() {
+    return latitude;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, latitude, longitude);
-	}
+  public void setLatitude(BigDecimal latitude) {
+    this.latitude = latitude;
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GeolocationDTO other = (GeolocationDTO) obj;
-		return id == other.id && Objects.equals(latitude, other.latitude) && Objects.equals(longitude, other.longitude);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, latitude, longitude);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    GeolocationDTO other = (GeolocationDTO) obj;
+    return id == other.id
+        && Objects.equals(latitude, other.latitude)
+        && Objects.equals(longitude, other.longitude);
+  }
 }

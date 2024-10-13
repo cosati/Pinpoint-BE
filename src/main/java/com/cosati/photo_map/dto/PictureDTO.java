@@ -4,93 +4,93 @@ import java.util.Date;
 import java.util.Objects;
 
 public class PictureDTO {
-	private long id;
-	private String title;
-	private String description;
-	private Date dateTaken;
-	private GeolocationDTO geolocation;
-	private FileDataDTO fileData;
-	
-	public PictureDTO(
-			long id, 
-			String title, 
-			String description, 
-			Date dateTaken, 
-			GeolocationDTO geolocation, 
-			FileDataDTO fileData) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.description = description;
-		this.dateTaken = dateTaken;
-		this.geolocation = geolocation;
-		this.fileData = fileData;
-	}
+  private long id;
+  private String title;
+  private String description;
+  private Date dateTaken;
+  private GeolocationDTO geolocation;
+  private FileDataDTO fileData;
 
-	public long getId() {
-		return id;
-	}
+  public PictureDTO(
+      long id,
+      String title,
+      String description,
+      Date dateTaken,
+      GeolocationDTO geolocation,
+      FileDataDTO fileData) {
+    super();
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.dateTaken = dateTaken;
+    this.geolocation = geolocation;
+    this.fileData = fileData;
+  }
 
-	public void setId(long id) {
-		this.id = id;
-	}
+  public long getId() {
+    return id;
+  }
 
-	public String getTitle() {
-		return title;
-	}
+  public void setId(long id) {
+    this.id = id;
+  }
 
-	public void setName(String title) {
-		this.title = title;
-	}
+  public String getTitle() {
+    return title;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public void setName(String title) {
+    this.title = title;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public Date getDateTaken() {
-		return dateTaken;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public void setDateTaken(Date dateTaken) {
-		this.dateTaken = dateTaken;
-	}
+  public Date getDateTaken() {
+    return dateTaken;
+  }
 
-	public GeolocationDTO getGeolocation() {
-		return geolocation;
-	}
+  public void setDateTaken(Date dateTaken) {
+    this.dateTaken = dateTaken;
+  }
 
-	public void setGeolocation(GeolocationDTO geolocation) {
-		this.geolocation = geolocation;
-	}
+  public GeolocationDTO getGeolocation() {
+    return geolocation;
+  }
 
-	public FileDataDTO getFileData() {
-		return fileData;
-	}
+  public void setGeolocation(GeolocationDTO geolocation) {
+    this.geolocation = geolocation;
+  }
 
-	public void setFileData(FileDataDTO fileData) {
-		this.fileData = fileData;
-	}
+  public FileDataDTO getFileData() {
+    return fileData;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(dateTaken, description, fileData, geolocation, id, title);
-	}
+  public void setFileData(FileDataDTO fileData) {
+    this.fileData = fileData;
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		PictureDTO other = (PictureDTO) obj;
-		return Objects.equals(dateTaken, other.dateTaken) && Objects.equals(description, other.description)
-				&& Objects.equals(fileData, other.fileData) && Objects.equals(geolocation, other.geolocation)
-				&& id == other.id && Objects.equals(title, other.title);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(dateTaken, description, fileData, geolocation, id, title);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() != obj.getClass()) return false;
+    PictureDTO other = (PictureDTO) obj;
+    return Objects.equals(dateTaken, other.dateTaken)
+        && Objects.equals(description, other.description)
+        && Objects.equals(fileData, other.fileData)
+        && Objects.equals(geolocation, other.geolocation)
+        && id == other.id
+        && Objects.equals(title, other.title);
+  }
 }
