@@ -34,7 +34,7 @@ public class StorageServiceTest {
   private static final String ORIGINAL_FILE_NAME = FILE_NAME + FILE_EXTENSION;
   private static final String FILE_DATA_PATH = "file/path";
 
-  private static final MockMultipartFile MOCK_MULTIPART_FILE =
+  private static final MockMultipartFile MULTIPART_FILE =
       new MockMultipartFile(FILE_NAME, ORIGINAL_FILE_NAME, FILE_TYPE, new byte[10]);
 
   @Mock private FileDataRepository fileDataRepository;
@@ -58,11 +58,11 @@ public class StorageServiceTest {
     Path mockPath = Paths.get(folderPath);
     FileData mockFileData = new FileData(mockPath.toString(), FILE_TYPE, UUID_FILE_NAME);
     when(fileHelper.getDirectory(any())).thenReturn(fileHelper);
-    when(fileHelper.writeFile(MOCK_MULTIPART_FILE, UUID_FILE_NAME)).thenReturn(mockPath);
+    when(fileHelper.writeFile(MULTIPART_FILE, UUID_FILE_NAME)).thenReturn(mockPath);
     when(uuidGenerator.generateUUID()).thenReturn(DEFAULT_UUID);
     when(fileDataRepository.save(any(FileData.class))).thenReturn(mockFileData);
 
-    storageService.uploadImageToFileSystem(MOCK_MULTIPART_FILE);
+    storageService.uploadImageToFileSystem(MULTIPART_FILE);
 
     verify(fileDataRepository).save(mockFileData);
   }
@@ -71,17 +71,17 @@ public class StorageServiceTest {
   void uploadImageToFileSystem_whenSucessful_returnsExpectedFileData() throws IOException {
     Path mockPath = Paths.get(folderPath);
     when(fileHelper.getDirectory(any())).thenReturn(fileHelper);
-    when(fileHelper.writeFile(MOCK_MULTIPART_FILE, UUID_FILE_NAME)).thenReturn(mockPath);
+    when(fileHelper.writeFile(MULTIPART_FILE, UUID_FILE_NAME)).thenReturn(mockPath);
     when(uuidGenerator.generateUUID()).thenReturn(DEFAULT_UUID);
-    FileData mockFileData =
+    FileData fileData =
         FileData.builder()
             .name(UUID_FILE_NAME)
             .type(FILE_TYPE)
             .filePath(mockPath.toString())
             .build();
-    when(fileDataRepository.save(any(FileData.class))).thenReturn(mockFileData);
+    when(fileDataRepository.save(any(FileData.class))).thenReturn(fileData);
 
-    FileData result = storageService.uploadImageToFileSystem(MOCK_MULTIPART_FILE);
+    FileData result = storageService.uploadImageToFileSystem(MULTIPART_FILE);
 
     assertEquals(UUID_FILE_NAME, result.getName());
     assertEquals(mockPath.toString(), result.getFilePath());
@@ -94,8 +94,7 @@ public class StorageServiceTest {
     when(uuidGenerator.generateUUID()).thenReturn(DEFAULT_UUID);
     when(fileHelper.getDirectory(any())).thenThrow(new IOException());
 
-    assertThrows(
-        IOException.class, () -> storageService.uploadImageToFileSystem(MOCK_MULTIPART_FILE));
+    assertThrows(IOException.class, () -> storageService.uploadImageToFileSystem(MULTIPART_FILE));
 
     verify(fileDataRepository, never()).save(any());
   }
@@ -109,7 +108,7 @@ public class StorageServiceTest {
             .id(FILE_DATA_ID)
             .url("/fileData/images/")
             .build();
-    FileData mockFileData =
+    FileData fileData =
         FileData.builder()
             .id(FILE_DATA_ID)
             .name(UUID_FILE_NAME)
@@ -117,7 +116,7 @@ public class StorageServiceTest {
             .filePath(FILE_DATA_PATH)
             .build();
 
-    FileDataDTO fileDataDTO = storageService.convertToDTO(mockFileData);
+    FileDataDTO fileDataDTO = storageService.convertToDTO(fileData);
 
     assertEquals(expectedDTO, fileDataDTO);
   }
