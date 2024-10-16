@@ -83,6 +83,8 @@ public class StorageServiceTest {
 
     FileData result = storageService.uploadImageToFileSystem(MULTIPART_FILE);
 
+    verify(fileHelper).writeFile(MULTIPART_FILE, UUID_FILE_NAME);
+    verify(fileDataRepository).save(fileData);
     assertEquals(UUID_FILE_NAME, result.getName());
     assertEquals(mockPath.toString(), result.getFilePath());
     assertEquals(FILE_TYPE, result.getType());
