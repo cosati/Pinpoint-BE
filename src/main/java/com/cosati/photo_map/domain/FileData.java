@@ -6,10 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Entity
+@Builder
 @Table(name = "file_data")
 public class FileData {
   @Id
@@ -27,6 +29,13 @@ public class FileData {
 
   public FileData(String filePath, String type, String name) {
     super();
+    this.filePath = filePath;
+    this.type = type;
+    this.name = name;
+  }
+  
+  public FileData(long id, String filePath, String type, String name) {
+    this.id = id;
     this.filePath = filePath;
     this.type = type;
     this.name = name;
