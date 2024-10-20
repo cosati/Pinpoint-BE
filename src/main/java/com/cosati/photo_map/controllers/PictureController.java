@@ -20,6 +20,7 @@ import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.repository.PictureRepository;
 import com.cosati.photo_map.service.PictureService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -54,6 +55,7 @@ public class PictureController {
   public ResponseEntity<PictureDTO> addPicture(
       @RequestParam("picture") String pictureJson, @RequestParam("file") MultipartFile file) {
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     Picture picture;
     try {
       picture = objectMapper.readValue(pictureJson, Picture.class);

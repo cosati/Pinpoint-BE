@@ -12,6 +12,7 @@ import com.cosati.photo_map.domain.Picture;
 import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.dto.GeolocationDTO;
 import com.cosati.photo_map.dto.PictureDTO;
+import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.repository.PictureRepository;
 
 @Service
@@ -20,6 +21,8 @@ public class PictureService {
   @Autowired private PictureRepository pictureRepository;
 
   @Autowired private StorageService storageService;
+
+  @Autowired private PinService pinService;
 
   public Picture savePictureWithImage(Picture picture, MultipartFile file) {
     try {
@@ -39,12 +42,15 @@ public class PictureService {
 
     FileDataDTO fileDataDto = storageService.convertToDTO(picture.getFileData());
 
+    PinDTO pinDto = picture.getPin() != null ? pinService.convertToDTO(picture.getPin()) : null;
+
     return new PictureDTO(
         picture.getId(),
         picture.getTitle(),
         picture.getDescription(),
         picture.getDateTaken(),
         geolocationDTO,
-        fileDataDto);
+        fileDataDto,
+        pinDto);
   }
 }

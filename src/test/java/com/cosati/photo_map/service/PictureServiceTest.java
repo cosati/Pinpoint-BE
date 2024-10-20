@@ -20,9 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cosati.photo_map.domain.FileData;
 import com.cosati.photo_map.domain.Geolocation;
 import com.cosati.photo_map.domain.Picture;
+import com.cosati.photo_map.domain.Pin;
 import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.dto.GeolocationDTO;
 import com.cosati.photo_map.dto.PictureDTO;
+import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.repository.PictureRepository;
 
 public class PictureServiceTest {
@@ -33,7 +35,10 @@ public class PictureServiceTest {
   private static final int DEFAULT_FILE_DATA_ID = 1;
   private static final int DEFAULT_GEOLOCATION_ID = 0;
   private static final int DEFAULT_POST_ID = 100;
+  private static final int PIN_ID = 10;
 
+  private static final String PIN_FILE_NAME = "blue.svg";
+  private static final String PIN_COLOR = "BLUE";
   private static final String DEFAULT_POST_DESCRIPTION = "Testing...";
   private static final String DEFAULT_POST_TITLE = "Paris";
   private static final String DEFAULT_FILE_TYPE = "image/png";
@@ -48,6 +53,8 @@ public class PictureServiceTest {
       new MockMultipartFile("image", "image.jpg", "image/jpeg", new byte[10]);
 
   @Mock private StorageService storageService;
+
+  @Mock private PinService pinService;
 
   @Mock private PictureRepository pictureRepository;
 
@@ -124,6 +131,9 @@ public class PictureServiceTest {
         .thenReturn(fileDataDTO);
     GeolocationDTO geolocationDTO =
         new GeolocationDTO(DEFAULT_GEOLOCATION_ID, DEFAULT_LONGITUDE, DEFAULT_LATITUDE);
+    Pin pin = Pin.builder().id(PIN_ID).color(PIN_COLOR).fileName(PIN_FILE_NAME).build();
+    PinDTO pinDTO = new PinDTO(10, PIN_COLOR, PIN_FILE_NAME, "/pins/icons/");
+    when(pinService.convertToDTO(pin)).thenReturn(pinDTO);
     PictureDTO expectedDTO =
         new PictureDTO(
             DEFAULT_POST_ID,
@@ -131,7 +141,8 @@ public class PictureServiceTest {
             DEFAULT_POST_DESCRIPTION,
             DEFAULT_DATE,
             geolocationDTO,
-            fileDataDTO);
+            fileDataDTO,
+            pinDTO);
     Picture picture =
         Picture.builder()
             .id(DEFAULT_POST_ID)
@@ -145,6 +156,7 @@ public class PictureServiceTest {
                     .longitude(DEFAULT_LONGITUDE)
                     .build())
             .fileData(new FileData(DEFAULT_FILE_PATH, DEFAULT_FILE_TYPE, DEFAULT_FILE_NAME))
+            .pin(pin)
             .build();
 
     PictureDTO pictureDTO = pictureService.convertToDTO(picture);

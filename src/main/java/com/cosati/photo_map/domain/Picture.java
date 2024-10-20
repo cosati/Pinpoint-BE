@@ -49,51 +49,7 @@ public class Picture {
   @JoinColumn(name = "image_file_id", referencedColumnName = "id")
   private FileData fileData;
 
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public long getId() {
-    return id;
-  }
-
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public Date getDateTaken() {
-    return dateTaken;
-  }
-
-  public void setDateTaken(Date dateTaken) {
-    this.dateTaken = dateTaken;
-  }
-
-  public Geolocation getGeolocation() {
-    return geolocation;
-  }
-
-  public void setGeolocation(Geolocation geolocation) {
-    this.geolocation = geolocation;
-  }
-
-  public FileData getFileData() {
-    return fileData;
-  }
-
-  public void setFileData(FileData fileData) {
-    this.fileData = fileData;
-  }
+  @OneToOne(fetch = FetchType.LAZY, optional = true)
+  @JoinColumn(name = "pin_id")
+  private Pin pin;
 }

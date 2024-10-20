@@ -10,6 +10,7 @@ public class PictureDTO {
   private Date dateTaken;
   private GeolocationDTO geolocation;
   private FileDataDTO fileData;
+  private PinDTO pin;
 
   public PictureDTO(
       long id,
@@ -17,7 +18,8 @@ public class PictureDTO {
       String description,
       Date dateTaken,
       GeolocationDTO geolocation,
-      FileDataDTO fileData) {
+      FileDataDTO fileData,
+      PinDTO pin) {
     super();
     this.id = id;
     this.title = title;
@@ -25,6 +27,7 @@ public class PictureDTO {
     this.dateTaken = dateTaken;
     this.geolocation = geolocation;
     this.fileData = fileData;
+    this.pin = pin;
   }
 
   public long getId() {
@@ -75,9 +78,13 @@ public class PictureDTO {
     this.fileData = fileData;
   }
 
+  public PinDTO getPin() {
+    return pin;
+  }
+
   @Override
   public int hashCode() {
-    return Objects.hash(dateTaken, description, fileData, geolocation, id, title);
+    return Objects.hash(dateTaken, description, fileData, geolocation, id, pin, title);
   }
 
   @Override
@@ -91,6 +98,7 @@ public class PictureDTO {
         && Objects.equals(fileData, other.fileData)
         && Objects.equals(geolocation, other.geolocation)
         && id == other.id
+        && Objects.equals(pin, other.pin)
         && Objects.equals(title, other.title);
   }
 }
