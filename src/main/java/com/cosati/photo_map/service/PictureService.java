@@ -34,6 +34,18 @@ public class PictureService {
     return pictureRepository.save(picture);
   }
 
+  public Picture updatePicture(Picture picture) {
+    Picture pictureToUpdate =
+        pictureRepository
+            .findById(picture.getId())
+            .orElseThrow(() -> new RuntimeException("Picture not found."));
+    pictureToUpdate.setDateTaken(picture.getDateTaken());
+    pictureToUpdate.setDescription(picture.getDescription());
+    pictureToUpdate.setPin(picture.getPin());
+    pictureToUpdate.setTitle(picture.getTitle());
+    return pictureRepository.save(pictureToUpdate);
+  }
+
   public PictureDTO convertToDTO(Picture picture) {
     Geolocation geolocation = picture.getGeolocation();
     GeolocationDTO geolocationDTO =

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +39,7 @@ public class PictureController {
         repository
             .findAll()
             .stream()
-            .map(picture -> pictureService.convertToDTO(picture))
+            .map(pictureService::convertToDTO)
             .collect(Collectors.toList()));
   }
 
@@ -64,6 +66,19 @@ public class PictureController {
     }
     return ResponseEntity.ok(
         pictureService.convertToDTO(pictureService.savePictureWithImage(picture, file)));
+  }
+
+  @PutMapping("/updatePicture")
+  public ResponseEntity<PictureDTO> updatePicture(@RequestBody String pictureJson) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    Picture picture;
+    try {
+      picture = objectMapper.readValue(pictureJson, Picture.class);
+    } catch (JsonProcessingException e) {
+      return ResponseEntity.badRequest().build();
+    }
+    return ResponseEntity.ok(pictureService.convertToDTO(pictureService.updatePicture(picture)));
   }
 
   @DeleteMapping("/picture/{id}")
