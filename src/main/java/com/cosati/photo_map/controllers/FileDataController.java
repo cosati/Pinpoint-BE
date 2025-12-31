@@ -17,7 +17,8 @@ public class FileDataController {
 
   @Autowired FileDataService fileDataService;
 
-  private final String FOLDER_PATH = "C:/Users/Cosati/Documents/mapImages";
+  // TODO fix
+  private final String FOLDER_PATH = "C:/Users/Cosati/OneDrive/Documentos/mapImages";
 
   @GetMapping("/images/{filename}")
   public ResponseEntity<FileUrlResource> getImage(@PathVariable("filename") String filename) {

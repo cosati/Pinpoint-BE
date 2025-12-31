@@ -14,7 +14,6 @@ public class FileDataService {
 
   public ResponseEntity<FileUrlResource> getFileUrlResource(String filename, String folderPath) {
     try {
-      System.out.println("Getting directory: %s".formatted(folderPath));
       Path filePath = Paths.get(folderPath).resolve(filename).normalize();
       FileUrlResource resource = new FileUrlResource(filePath.toString());
 
