@@ -24,8 +24,6 @@ import com.cosati.photo_map.repository.FileDataRepository;
 import com.cosati.photo_map.utils.FileHelper;
 import com.cosati.photo_map.utils.UUIDGenerator;
 
-@SpringBootTest
-@ActiveProfiles("test")
 public class StorageServiceTest {
 
   private static final int FILE_DATA_ID = 101;

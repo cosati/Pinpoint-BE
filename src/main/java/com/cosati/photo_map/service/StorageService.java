@@ -14,7 +14,6 @@ import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.repository.FileDataRepository;
 import com.cosati.photo_map.utils.FileHelper;
 import com.cosati.photo_map.utils.UUIDGenerator;
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class StorageService {
@@ -27,12 +26,6 @@ public class StorageService {
 
   @Value("${folder.path}")
   private String folderPath;
-  
-  @PostConstruct
-  public void init() throws IOException {
-    Path path = Paths.get(folderPath);
-    Files.createDirectories(path);
-  }
 
   public FileData uploadImageToFileSystem(MultipartFile file) throws IOException {
     String originalFileName = file.getOriginalFilename();
