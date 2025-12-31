@@ -3,6 +3,7 @@ package com.cosati.photo_map.service;
 import java.io.File;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.cosati.photo_map.domain.Pin;
 import com.cosati.photo_map.dto.PinDTO;
@@ -12,7 +13,8 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class PinService {
 
-  private final String ICONS_LOCATION = "C:/Users/Cosati/OneDrive/Imagens/pins";
+  @Value("${folder.pins}")
+  private String ICONS_LOCATION;
 
   @Autowired private PinRepository pinRepository;
 

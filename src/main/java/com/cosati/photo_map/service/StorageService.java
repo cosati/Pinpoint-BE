@@ -1,8 +1,9 @@
 package com.cosati.photo_map.service;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-
+import java.nio.file.Paths;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,25 @@ import com.cosati.photo_map.utils.UUIDGenerator;
 @Service
 public class StorageService {
 
-  @Autowired private FileDataRepository fileDataRepository;
+  private FileDataRepository fileDataRepository;
 
-  @Autowired private UUIDGenerator uuidGenerator;
+  private UUIDGenerator uuidGenerator;
 
-  @Autowired private FileHelper fileHelper;
+  private FileHelper fileHelper;
 
-  @Value("${folder.path}")
   private String folderPath;
+  
+  @Autowired
+  public StorageService(
+      @Value("${folder.path}") String folderPath, 
+      FileDataRepository fileDataRepository,
+      UUIDGenerator uuidGenerator,
+      FileHelper fileHelper) {
+    this.folderPath = folderPath;
+    this.fileDataRepository = fileDataRepository;
+    this.uuidGenerator = uuidGenerator;
+    this.fileHelper = fileHelper;
+  }
 
   public FileData uploadImageToFileSystem(MultipartFile file) throws IOException {
     String originalFileName = file.getOriginalFilename();
