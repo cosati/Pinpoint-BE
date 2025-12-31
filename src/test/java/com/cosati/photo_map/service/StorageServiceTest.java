@@ -44,7 +44,7 @@ public class StorageServiceTest {
   @Mock private FileHelper fileHelper;
 
   @Value("${folder.path}")
-  private String folderPath;
+  private String folderPath = "testFolder";
 
   @InjectMocks private StorageService storageService;
 
