@@ -12,10 +12,11 @@ import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,8 @@ import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.repository.PictureRepository;
 
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class PictureServiceTest {
 
   private static final long DEFAULT_TIMESTAMP = 1672531200000L;

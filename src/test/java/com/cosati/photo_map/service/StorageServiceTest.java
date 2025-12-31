@@ -11,11 +11,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import com.cosati.photo_map.domain.FileData;
@@ -24,6 +25,8 @@ import com.cosati.photo_map.repository.FileDataRepository;
 import com.cosati.photo_map.utils.FileHelper;
 import com.cosati.photo_map.utils.UUIDGenerator;
 
+@ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class StorageServiceTest {
 
   private static final int FILE_DATA_ID = 101;
