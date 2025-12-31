@@ -12,13 +12,10 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import com.cosati.photo_map.domain.FileData;
 import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.repository.FileDataRepository;
@@ -26,8 +23,9 @@ import com.cosati.photo_map.utils.FileHelper;
 import com.cosati.photo_map.utils.UUIDGenerator;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
 public class StorageServiceTest {
+
+  private static final String FILE_PATH = "\\tmp\\test-images";
 
   private static final int FILE_DATA_ID = 101;
 
@@ -48,20 +46,21 @@ public class StorageServiceTest {
 
   @Mock private FileHelper fileHelper;
 
-  @Value("${folder.path}")
-  private String folderPath = "testFolder";
-
-  @InjectMocks private StorageService storageService;
+  private StorageService storageService;
 
   @BeforeEach
   void setup() throws IOException {
     MockitoAnnotations.openMocks(this);
+    storageService = new StorageService(
+        FILE_PATH, 
+        fileDataRepository, 
+        uuidGenerator, fileHelper);
   }
 
   @Test
   void uploadImageToFileSystem_whenSuccessful_shouldSaveExpectedFileData() throws IOException {
-    Path mockPath = Paths.get(folderPath);
-    FileData mockFileData = new FileData(mockPath.toString(), FILE_TYPE, UUID_FILE_NAME);
+    Path mockPath = Paths.get(FILE_PATH);
+    FileData mockFileData = new FileData(FILE_PATH, FILE_TYPE, UUID_FILE_NAME);
     when(fileHelper.getDirectory(any())).thenReturn(fileHelper);
     when(fileHelper.writeFile(MULTIPART_FILE, UUID_FILE_NAME)).thenReturn(mockPath);
     when(uuidGenerator.generateUUID()).thenReturn(DEFAULT_UUID);
@@ -74,7 +73,7 @@ public class StorageServiceTest {
 
   @Test
   void uploadImageToFileSystem_whenSucessful_returnsExpectedFileData() throws IOException {
-    Path mockPath = Paths.get(folderPath);
+    Path mockPath = Paths.get(FILE_PATH);
     when(fileHelper.getDirectory(any())).thenReturn(fileHelper);
     when(fileHelper.writeFile(MULTIPART_FILE, UUID_FILE_NAME)).thenReturn(mockPath);
     when(uuidGenerator.generateUUID()).thenReturn(DEFAULT_UUID);
@@ -82,7 +81,7 @@ public class StorageServiceTest {
         FileData.builder()
             .name(UUID_FILE_NAME)
             .type(FILE_TYPE)
-            .filePath(mockPath.toString())
+            .filePath(FILE_PATH)
             .build();
     when(fileDataRepository.save(any(FileData.class))).thenReturn(fileData);
 
@@ -91,7 +90,7 @@ public class StorageServiceTest {
     verify(fileHelper).writeFile(MULTIPART_FILE, UUID_FILE_NAME);
     verify(fileDataRepository).save(fileData);
     assertEquals(UUID_FILE_NAME, result.getName());
-    assertEquals(mockPath.toString(), result.getFilePath());
+    assertEquals(FILE_PATH, result.getFilePath());
     assertEquals(FILE_TYPE, result.getType());
   }
 

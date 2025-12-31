@@ -18,14 +18,25 @@ import com.cosati.photo_map.utils.UUIDGenerator;
 @Service
 public class StorageService {
 
-  @Autowired private FileDataRepository fileDataRepository;
+  private FileDataRepository fileDataRepository;
 
-  @Autowired private UUIDGenerator uuidGenerator;
+  private UUIDGenerator uuidGenerator;
 
-  @Autowired private FileHelper fileHelper;
+  private FileHelper fileHelper;
 
-  @Value("${folder.path}")
   private String folderPath;
+  
+  @Autowired
+  public StorageService(
+      @Value("${folder.path}") String folderPath, 
+      FileDataRepository fileDataRepository,
+      UUIDGenerator uuidGenerator,
+      FileHelper fileHelper) {
+    this.folderPath = folderPath;
+    this.fileDataRepository = fileDataRepository;
+    this.uuidGenerator = uuidGenerator;
+    this.fileHelper = fileHelper;
+  }
 
   public FileData uploadImageToFileSystem(MultipartFile file) throws IOException {
     String originalFileName = file.getOriginalFilename();
