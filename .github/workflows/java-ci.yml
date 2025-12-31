@@ -19,6 +19,9 @@ jobs:
               distribution: 'temurin'
               java-version: '22'
               cache: 'maven'
+              
+          - name: Create test directory
+            run: mkdir -p /tmp/test-images
 
           - name: Build with Maven
             run: mvn -B verify
