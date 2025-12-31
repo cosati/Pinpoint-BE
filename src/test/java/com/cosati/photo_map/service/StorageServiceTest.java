@@ -15,13 +15,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import com.cosati.photo_map.domain.FileData;
 import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.repository.FileDataRepository;
 import com.cosati.photo_map.utils.FileHelper;
 import com.cosati.photo_map.utils.UUIDGenerator;
 
+@SpringBootTest
+@ActiveProfiles("test")
 public class StorageServiceTest {
 
   private static final int FILE_DATA_ID = 101;
