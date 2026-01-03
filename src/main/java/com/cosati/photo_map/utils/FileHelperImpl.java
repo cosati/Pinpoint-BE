@@ -1,7 +1,6 @@
 package com.cosati.photo_map.utils;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class FileHelperImpl implements FileHelper {
       throw new IllegalStateException("Directory not created. Call createDirectory first.");
     }
     Path filePath = uploadPath.resolve(uniqueFileName);
-    Files.write(filePath, file.getBytes());
+    fileSystemHelper.writeFile(filePath, file.getBytes());
     return filePath;
   }
 }

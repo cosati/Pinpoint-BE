@@ -23,5 +23,10 @@ public class FileSystemHelperImpl implements FileSystemHelper {
   public Path getPath(String folderPath) {
     return Paths.get(folderPath);
   }
+
+  @Override
+  public void writeFile(Path filePath, byte[] file) throws IOException {
+    Files.write(filePath, file);
+  }
   
 }

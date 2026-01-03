@@ -7,4 +7,5 @@ public interface FileSystemHelper {
   boolean exists(Path path);
   void createDirectories(Path path) throws IOException;
   Path getPath(String folderPath);
+  void writeFile(Path filePath, byte[] file) throws IOException;
 }
