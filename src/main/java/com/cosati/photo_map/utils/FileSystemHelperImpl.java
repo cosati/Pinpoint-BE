@@ -28,5 +28,10 @@ public class FileSystemHelperImpl implements FileSystemHelper {
   public void writeFile(Path filePath, byte[] file) throws IOException {
     Files.write(filePath, file);
   }
+
+  @Override
+  public String probeContentType(Path filePath) throws IOException {
+    return Files.probeContentType(filePath);
+  }
   
 }

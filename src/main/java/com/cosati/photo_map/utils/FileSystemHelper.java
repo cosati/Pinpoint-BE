@@ -8,4 +8,5 @@ public interface FileSystemHelper {
   void createDirectories(Path path) throws IOException;
   Path getPath(String folderPath);
   void writeFile(Path filePath, byte[] file) throws IOException;
+  String probeContentType(Path filePath) throws IOException;
 }
