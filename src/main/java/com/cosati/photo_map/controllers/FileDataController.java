@@ -15,13 +15,18 @@ import com.cosati.photo_map.service.FileDataService;
 @RequestMapping("/fileData")
 public class FileDataController {
 
-  @Autowired FileDataService fileDataService;
-
+  private FileDataService fileDataService;
+  
   // TODO fix
   private final String FOLDER_PATH = "C:/Users/Cosati/OneDrive/Documentos/mapImages";
+  
+  @Autowired
+  public FileDataController(FileDataService fileDataService) {
+    this.fileDataService = fileDataService;
+  }
 
   @GetMapping("/images/{filename}")
   public ResponseEntity<FileUrlResource> getImage(@PathVariable("filename") String filename) {
-    return fileDataService.getFileUrlResource(filename, FOLDER_PATH);
+    return fileDataService.getFileUrlResourceResponse(filename, FOLDER_PATH);
   }
 }

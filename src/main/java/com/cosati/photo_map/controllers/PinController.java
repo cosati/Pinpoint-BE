@@ -26,6 +26,7 @@ public class PinController {
 
   @Autowired private FileDataService fileDataService;
 
+  //TODO fix
   private final String ICONS_LOCATION = "C:/Users/Cosati/OneDrive/Imagens/pins";
 
   @GetMapping("/icons")
@@ -40,6 +41,6 @@ public class PinController {
 
   @GetMapping("/icons/{filename}")
   public ResponseEntity<FileUrlResource> getIcon(@PathVariable("filename") String filename) {
-    return fileDataService.getFileUrlResource(filename, ICONS_LOCATION);
+    return fileDataService.getFileUrlResourceResponse(filename, ICONS_LOCATION);
   }
 }

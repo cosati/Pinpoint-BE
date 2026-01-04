@@ -1,9 +1,11 @@
 package com.cosati.photo_map.utils;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.springframework.core.io.FileUrlResource;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,6 +29,16 @@ public class FileSystemHelperImpl implements FileSystemHelper {
   @Override
   public void writeFile(Path filePath, byte[] file) throws IOException {
     Files.write(filePath, file);
+  }
+
+  @Override
+  public String probeContentType(Path filePath) throws IOException {
+    return Files.probeContentType(filePath);
+  }
+
+  @Override
+  public FileUrlResource getResource(Path filePath) throws MalformedURLException {
+    return new FileUrlResource(filePath.toString());
   }
   
 }
