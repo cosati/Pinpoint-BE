@@ -1,6 +1,7 @@
 package com.cosati.photo_map.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,17 +17,19 @@ import com.cosati.photo_map.service.FileDataService;
 public class FileDataController {
 
   private FileDataService fileDataService;
-  
-  // TODO fix
-  private final String FOLDER_PATH = "C:/Users/Cosati/OneDrive/Documentos/mapImages";
+
+  private final String foldePath;
   
   @Autowired
-  public FileDataController(FileDataService fileDataService) {
+  public FileDataController(
+      FileDataService fileDataService,
+      @Value("${folder.path}") String folderPath) {
     this.fileDataService = fileDataService;
+    this.foldePath = folderPath;
   }
 
   @GetMapping("/images/{filename}")
   public ResponseEntity<FileUrlResource> getImage(@PathVariable("filename") String filename) {
-    return fileDataService.getFileUrlResourceResponse(filename, FOLDER_PATH);
+    return fileDataService.getFileUrlResourceResponse(filename, foldePath);
   }
 }
