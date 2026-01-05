@@ -13,17 +13,24 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class PinService {
 
-  @Value("${folder.pins}")
-  private String ICONS_LOCATION;
+  private String iconsLocation;
 
-  @Autowired private PinRepository pinRepository;
+  private PinRepository pinRepository;
+  
+  @Autowired
+  public PinService(
+      @Value("${folder.pins}") String iconsLocation,
+      PinRepository pinRepository) {
+    this.iconsLocation = iconsLocation;
+    this.pinRepository = pinRepository;
+  }
 
   @PostConstruct
   public void updatePins() {
-    File folder = new File(ICONS_LOCATION);
+    File folder = new File(iconsLocation);
 
     if (!folder.exists() || !folder.isDirectory()) {
-      throw new IllegalArgumentException("Cannot find folder path.");
+      throw new IllegalStateException("Cannot find folder path.");
     }
 
     File[] files = folder.listFiles();
