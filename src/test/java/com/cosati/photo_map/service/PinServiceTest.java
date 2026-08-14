@@ -48,11 +48,14 @@ public class PinServiceTest {
   
   @Test
   void updatePins_fileDoesNotExist_shouldThrowIllegalArgumentException() {
-    PinService service = new PinService("non-existing-folder", pinRepository);
+    Path nonExistingFolder = tempDir.resolve("newFolder");
+    PinService service = new PinService(nonExistingFolder.toString(), pinRepository);
     
-    assertThatThrownBy(() -> service.updatePins())
-      .isInstanceOf(IllegalStateException.class)
-      .hasMessage("Cannot find folder path.");
+    service.updatePins();
+    
+    assertThat(Files.exists(nonExistingFolder)).isTrue();
+    assertThat(Files.isDirectory(nonExistingFolder)).isTrue();
+    verifyNoMoreInteractions(pinRepository);
   }
   
   @Test

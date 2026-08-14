@@ -29,8 +29,12 @@ public class PinService {
   public void updatePins() {
     File folder = new File(iconsLocation);
 
-    if (!folder.exists() || !folder.isDirectory()) {
-      throw new IllegalStateException("Cannot find folder path.");
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    
+    if (!folder.isDirectory()) {
+      throw new IllegalStateException("Configured folder.pins path is not a directory.");
     }
 
     File[] files = folder.listFiles();
