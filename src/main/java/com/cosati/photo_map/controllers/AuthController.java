@@ -17,6 +17,7 @@ import com.cosati.photo_map.dto.RegisterRequest;
 import com.cosati.photo_map.repository.UserRepository;
 import com.cosati.photo_map.security.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,7 +30,7 @@ public class AuthController {
   @Autowired private JwtService jwtService;
 
   @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+  public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
     if (userRepository.findByEmail(req.email()).isPresent()) {
       return ResponseEntity.status(409).body("Email already registered");
     }
@@ -44,7 +45,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpServletResponse response) {
+  public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req, HttpServletResponse response) {
     User user =
         userRepository
             .findByEmail(req.email())
