@@ -9,34 +9,37 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.FileUrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import com.cosati.photo_map.repository.UserRepository;
+import com.cosati.photo_map.security.JwtService;
 import com.cosati.photo_map.service.FileDataService;
 
 @WebMvcTest(FileDataController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class FileDataControllerTest {
-  
-  @Autowired
-  private MockMvc mockMvc;
-  
-  @MockBean
-  private FileDataService fileDataService;
-  
+
+  @Autowired private MockMvc mockMvc;
+
+  @MockBean private FileDataService fileDataService;
+
+  @MockBean private JwtService jwtService;
+
+  @MockBean private UserRepository userRepository;
+
   @Test
   void getImage_ifExists_shouldReturnImage() throws Exception {
     FileUrlResource resource = mock(FileUrlResource.class);
     ResponseEntity<FileUrlResource> response = ResponseEntity.ok(resource);
     when(fileDataService.getFileUrlResourceResponse(eq("test.png"), anyString()))
-      .thenReturn(response);
-    
-    mockMvc.perform(get("/fileData/images/test.png"))
-      .andExpect(status().isOk());
-    
-    verify(fileDataService)
-      .getFileUrlResourceResponse(eq("test.png"), anyString());
+        .thenReturn(response);
+
+    mockMvc.perform(get("/fileData/images/test.png")).andExpect(status().isOk());
+
+    verify(fileDataService).getFileUrlResourceResponse(eq("test.png"), anyString());
   }
-  
 }
