@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,7 @@ public class StorageServiceTest {
 
   private static final String FILE_PATH = "\\tmp\\test-images";
 
-  private static final int FILE_DATA_ID = 101;
+  private static final UUID FILE_DATA_ID = UUID.randomUUID();
 
   private static final String FILE_EXTENSION = ".png";
   private static final String DEFAULT_UUID = "123e4567-e89b-12d3-a456-426614174000";
