@@ -24,3 +24,7 @@ logging:
 folder:
   path: "C:/Users/Cosati/OneDrive/Documentos/mapImages"
   pins: "C:/Users/Cosati/OneDrive/Imagens/pins"
+  
+jwt:
+  secret: ${JWT_SECRET:this-is-a-local-only-dev-secret-change-me-32-bytes-min}
+  expiration-days: 7

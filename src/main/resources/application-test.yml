@@ -18,3 +18,7 @@ spring:
 folder:
   path: /tmp/test-images
   pins: /tmp/test-images
+  
+jwt:
+  secret: test-only-secret-not-for-production-use-32bytes
+  expiration-days: 7
