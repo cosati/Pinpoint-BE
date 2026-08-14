@@ -2,9 +2,9 @@ spring:
   application:
     name: photo-map
   datasource:
-    url: jdbc:postgresql://localhost:5432/travel_map
-    username: postgres
-    password:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/travel_map}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:}
   jpa:
     properties:
       hibernate:
