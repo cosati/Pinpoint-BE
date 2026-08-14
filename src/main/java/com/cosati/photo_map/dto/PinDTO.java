@@ -1,21 +1,22 @@
 package com.cosati.photo_map.dto;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class PinDTO {
-  private long id;
+  private UUID id;
   private String color;
   private String fileName;
   private String url;
 
-  public PinDTO(long id, String color, String fileName, String url) {
+  public PinDTO(UUID id, String color, String fileName, String url) {
     this.id = id;
     this.color = color;
     this.fileName = fileName;
     this.url = url + this.fileName;
   }
   
-  public long getId() {
+  public UUID getId() {
     return id;
   }
 

@@ -1,5 +1,6 @@
 package com.cosati.photo_map.domain;
 
+import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "pin")
 public class Pin {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
   
   @Column(name = "color")
   private String color;
