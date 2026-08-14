@@ -12,6 +12,7 @@ public class PictureDTO {
   private GeolocationDTO geolocation;
   private FileDataDTO fileData;
   private PinDTO pin;
+  private UserDTO user;
 
   public PictureDTO(
       UUID id,
@@ -20,7 +21,8 @@ public class PictureDTO {
       Date dateTaken,
       GeolocationDTO geolocation,
       FileDataDTO fileData,
-      PinDTO pin) {
+      PinDTO pin,
+      UserDTO user) {
     super();
     this.id = id;
     this.title = title;
@@ -30,6 +32,12 @@ public class PictureDTO {
     this.fileData = fileData;
     this.pin = pin;
   }
+
+  public UserDTO getUser() {
+  return user;}
+
+  public void setUser(UserDTO user) {
+  this.user = user;}
 
   public UUID getId() {
     return id;
@@ -85,7 +93,7 @@ public class PictureDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hash(dateTaken, description, fileData, geolocation, id, pin, title);
+    return Objects.hash(dateTaken, description, fileData, geolocation, id, pin, title, user);
   }
 
   @Override
@@ -100,6 +108,7 @@ public class PictureDTO {
         && Objects.equals(geolocation, other.geolocation)
         && id == other.id
         && Objects.equals(pin, other.pin)
-        && Objects.equals(title, other.title);
+        && Objects.equals(title, other.title)
+        && Objects.equals(user, other.user);
   }
 }

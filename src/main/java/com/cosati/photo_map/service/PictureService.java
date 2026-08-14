@@ -13,6 +13,7 @@ import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.dto.GeolocationDTO;
 import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
+import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.repository.PictureRepository;
 
 @Service
@@ -55,6 +56,8 @@ public class PictureService {
     FileDataDTO fileDataDto = storageService.convertToDTO(picture.getFileData());
 
     PinDTO pinDto = picture.getPin() != null ? pinService.convertToDTO(picture.getPin()) : null;
+    
+    UserDTO user = new UserDTO(picture.getUser().getId(), picture.getUser().getDisplayName());
 
     return new PictureDTO(
         picture.getId(),
@@ -63,6 +66,7 @@ public class PictureService {
         picture.getDateTaken(),
         geolocationDTO,
         fileDataDto,
-        pinDto);
+        pinDto,
+        user);
   }
 }

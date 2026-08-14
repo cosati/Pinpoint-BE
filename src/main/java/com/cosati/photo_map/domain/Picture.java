@@ -52,4 +52,8 @@ public class Picture {
   @OneToOne(fetch = FetchType.LAZY, optional = true)
   @JoinColumn(name = "pin_id")
   private Pin pin;
+  
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 }
