@@ -2,7 +2,7 @@ package com.cosati.photo_map.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-
+import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "geolocations")
 public class Geolocation {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Column(name = "longitude", nullable = false, precision = 9, scale = 6)
   private BigDecimal longitude;
@@ -36,11 +36,11 @@ public class Geolocation {
   @OneToMany(mappedBy = "geolocation", fetch = FetchType.LAZY)
   private List<Picture> pictures;
 
-  public long getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 

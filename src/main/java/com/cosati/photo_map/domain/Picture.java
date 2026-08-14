@@ -1,7 +1,7 @@
 package com.cosati.photo_map.domain;
 
 import java.util.Date;
-
+import java.util.UUID;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,8 +28,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "pictures")
 public class Picture {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Column(name = "title", nullable = false)
   private String title;

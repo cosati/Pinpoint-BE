@@ -1,28 +1,28 @@
 package com.cosati.photo_map.dto;
 
 import java.util.Objects;
-
+import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public class FileDataDTO {
-  private long id;
+  private UUID id;
   private String filename;
   private String filePath;
   private String url;
 
-  public FileDataDTO(long id, String fileName, String filePath, String apiResource) {
+  public FileDataDTO(UUID id, String fileName, String filePath, String apiResource) {
     this.id = id;
     this.filename = fileName;
     this.filePath = filePath;
     this.url = apiResource + this.filename;
   }
 
-  public long getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 

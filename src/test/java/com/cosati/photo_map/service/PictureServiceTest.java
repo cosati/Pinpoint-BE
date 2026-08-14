@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
-
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,10 +37,10 @@ public class PictureServiceTest {
   private static final long DEFAULT_TIMESTAMP = 1672531200000L;
   private static final Date DEFAULT_DATE = new Date(DEFAULT_TIMESTAMP);
 
-  private static final int DEFAULT_FILE_DATA_ID = 1;
-  private static final int DEFAULT_GEOLOCATION_ID = 0;
-  private static final int DEFAULT_POST_ID = 100;
-  private static final int PIN_ID = 10;
+  private static final UUID DEFAULT_FILE_DATA_ID = UUID.randomUUID();
+  private static final UUID DEFAULT_GEOLOCATION_ID = UUID.randomUUID();
+  private static final UUID DEFAULT_POST_ID = UUID.randomUUID();
+  private static final UUID PIN_ID = UUID.randomUUID();
 
   private static final String PIN_FILE_NAME = "blue.svg";
   private static final String PIN_COLOR = "BLUE";
@@ -137,7 +137,7 @@ public class PictureServiceTest {
     GeolocationDTO geolocationDTO =
         new GeolocationDTO(DEFAULT_GEOLOCATION_ID, DEFAULT_LONGITUDE, DEFAULT_LATITUDE);
     Pin pin = Pin.builder().id(PIN_ID).color(PIN_COLOR).fileName(PIN_FILE_NAME).build();
-    PinDTO pinDTO = new PinDTO(10, PIN_COLOR, PIN_FILE_NAME, "/pins/icons/");
+    PinDTO pinDTO = new PinDTO(PIN_ID, PIN_COLOR, PIN_FILE_NAME, "/pins/icons/");
     when(pinService.convertToDTO(pin)).thenReturn(pinDTO);
     PictureDTO expectedDTO =
         new PictureDTO(

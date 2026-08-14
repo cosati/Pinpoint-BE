@@ -1,5 +1,6 @@
 package com.cosati.photo_map.domain;
 
+import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +16,8 @@ import lombok.Data;
 @Table(name = "file_data")
 public class FileData {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private long id;
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @Column(name = "file_path")
   private String filePath;
@@ -34,7 +35,7 @@ public class FileData {
     this.name = name;
   }
   
-  public FileData(long id, String filePath, String type, String name) {
+  public FileData(UUID id, String filePath, String type, String name) {
     this.id = id;
     this.filePath = filePath;
     this.type = type;
@@ -43,11 +44,11 @@ public class FileData {
 
   public FileData() {}
 
-  public long getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 

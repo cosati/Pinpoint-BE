@@ -2,9 +2,10 @@ package com.cosati.photo_map.dto;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 public class PictureDTO {
-  private long id;
+  private UUID id;
   private String title;
   private String description;
   private Date dateTaken;
@@ -13,7 +14,7 @@ public class PictureDTO {
   private PinDTO pin;
 
   public PictureDTO(
-      long id,
+      UUID id,
       String title,
       String description,
       Date dateTaken,
@@ -30,11 +31,11 @@ public class PictureDTO {
     this.pin = pin;
   }
 
-  public long getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(UUID id) {
     this.id = id;
   }
 
