@@ -39,7 +39,7 @@ public class PictureServiceTest {
 
   private static final UUID DEFAULT_FILE_DATA_ID = UUID.randomUUID();
   private static final UUID DEFAULT_GEOLOCATION_ID = UUID.randomUUID();
-  private static final int DEFAULT_POST_ID = 100;
+  private static final UUID DEFAULT_POST_ID = UUID.randomUUID();
   private static final UUID PIN_ID = UUID.randomUUID();
 
   private static final String PIN_FILE_NAME = "blue.svg";
