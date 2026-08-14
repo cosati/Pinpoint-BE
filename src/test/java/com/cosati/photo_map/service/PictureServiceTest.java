@@ -38,7 +38,7 @@ public class PictureServiceTest {
   private static final Date DEFAULT_DATE = new Date(DEFAULT_TIMESTAMP);
 
   private static final int DEFAULT_FILE_DATA_ID = 1;
-  private static final int DEFAULT_GEOLOCATION_ID = 0;
+  private static final UUID DEFAULT_GEOLOCATION_ID = UUID.randomUUID();
   private static final int DEFAULT_POST_ID = 100;
   private static final UUID PIN_ID = UUID.randomUUID();
 
