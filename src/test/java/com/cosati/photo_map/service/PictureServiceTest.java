@@ -67,6 +67,8 @@ public class PictureServiceTest {
 
   @Mock private PictureRepository pictureRepository;
 
+  @Mock private AuthenticatedUserProvider userProvider;
+
   @InjectMocks private PictureService pictureService;
 
   @BeforeEach
@@ -76,6 +78,8 @@ public class PictureServiceTest {
 
   @Test
   void savePictureWithImage_savesToFileSystem_returnsPicture() throws IOException {
+    when(userProvider.getCurrentUser())
+        .thenReturn(User.builder().id(UUID.randomUUID()).displayName("username").build());
     FileData fileData = new FileData(DEFAULT_FILE_PATH, DEFAULT_FILE_TYPE, DEFAULT_FILE_NAME);
     Picture picture =
         Picture.builder()
@@ -105,6 +109,8 @@ public class PictureServiceTest {
   void savePictureWithImage_failsSaveToFileSystem_returnsNull() throws IOException {
     when(storageService.uploadImageToFileSystem(any()))
         .thenThrow(new IOException("File upload Error"));
+    when(userProvider.getCurrentUser())
+        .thenReturn(User.builder().id(UUID.randomUUID()).displayName("username").build());
     Picture picture =
         Picture.builder()
             .id(DEFAULT_POST_ID)

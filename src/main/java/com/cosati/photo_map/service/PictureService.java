@@ -1,8 +1,9 @@
 package com.cosati.photo_map.service;
 
 import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,8 +25,11 @@ public class PictureService {
   @Autowired private StorageService storageService;
 
   @Autowired private PinService pinService;
+  
+  @Autowired private AuthenticatedUserProvider userProvider;
 
   public Picture savePictureWithImage(Picture picture, MultipartFile file) {
+    picture.setUser(userProvider.getCurrentUser());
     try {
       FileData fileData = storageService.uploadImageToFileSystem(file);
       picture.setFileData(fileData);
