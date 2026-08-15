@@ -9,44 +9,44 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.cosati.photo_map.exceptions.FileStorageException;
+import com.cosati.photo_map.exceptions.ResourceNotFoundException;
 import com.cosati.photo_map.utils.FileSystemHelper;
 
 @Service
 public class FileDataService {
-  
+
   private final FileSystemHelper fileSystemHelper;
-  
+
   @Autowired
   public FileDataService(FileSystemHelper fileSystemHelper) {
     this.fileSystemHelper = fileSystemHelper;
   }
-  
-  private FileUrlResource getFileUrlResource(String filename, String folderPath) 
+
+  private FileUrlResource getFileUrlResource(String filename, String folderPath)
       throws FileNotFoundException, IOException {
-      Path filePath = fileSystemHelper
-          .getPath(folderPath)
-          .resolve(filename)
-          .normalize();
-      
-      FileUrlResource resource = fileSystemHelper.getResource(filePath);
+    Path filePath = fileSystemHelper.getPath(folderPath).resolve(filename).normalize();
 
-      if (!resource.exists()) {
-        throw new FileNotFoundException();
-      }
+    FileUrlResource resource = fileSystemHelper.getResource(filePath);
 
-      return resource;
+    if (!resource.exists()) {
+      throw new FileNotFoundException();
+    }
+
+    return resource;
   }
-  
+
   private String getFileContentType(String filename, String folderPath) throws IOException {
     Path filePath = fileSystemHelper.getPath(folderPath).resolve(filename).normalize();
     return fileSystemHelper.probeContentType(filePath);
   }
-  
-  public ResponseEntity<FileUrlResource> getFileUrlResourceResponse(String filename, String folderPath) {
+
+  public ResponseEntity<FileUrlResource> getFileUrlResourceResponse(
+      String filename, String folderPath) {
     try {
       var fileUrlResource = getFileUrlResource(filename, folderPath);
       var contentType = getFileContentType(filename, folderPath);
-      
+
       return ResponseEntity.ok()
           .contentType(MediaType.parseMediaType(contentType))
           .header(
@@ -54,9 +54,9 @@ public class FileDataService {
               "inline; filename=\"" + fileUrlResource.getFilename() + "\"")
           .body(fileUrlResource);
     } catch (FileNotFoundException e) {
-      return ResponseEntity.status(404).body(null);
+      throw new ResourceNotFoundException("File not found");
     } catch (IOException e) {
-      return ResponseEntity.status(500).body(null);
+      throw new FileStorageException("Failed to determine file content type.", e);
     }
   }
 }

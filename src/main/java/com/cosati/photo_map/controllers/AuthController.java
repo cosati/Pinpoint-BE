@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cosati.photo_map.domain.User;
 import com.cosati.photo_map.dto.LoginRequest;
 import com.cosati.photo_map.dto.RegisterRequest;
+import com.cosati.photo_map.exceptions.EmailAlreadyRegisteredException;
 import com.cosati.photo_map.repository.UserRepository;
 import com.cosati.photo_map.security.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ public class AuthController {
   @PostMapping("/register")
   public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
     if (userRepository.findByEmail(req.email()).isPresent()) {
-      return ResponseEntity.status(409).body("Email already registered");
+      throw new EmailAlreadyRegisteredException("Email already registered");
     }
     User user =
         User.builder()

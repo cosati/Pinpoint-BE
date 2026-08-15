@@ -16,6 +16,7 @@ import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.exceptions.ForbiddenOperationException;
+import com.cosati.photo_map.exceptions.ResourceNotFoundException;
 import com.cosati.photo_map.repository.PictureRepository;
 
 @Service
@@ -44,7 +45,7 @@ public class PictureService {
     Picture pictureToUpdate =
         pictureRepository
             .findById(picture.getId())
-            .orElseThrow(() -> new RuntimeException("Picture not found."));
+            .orElseThrow(() -> new ResourceNotFoundException("Picture not found."));
     
     assertOwnership(pictureToUpdate);
     
@@ -59,7 +60,7 @@ public class PictureService {
     Picture picture =
         pictureRepository
             .findById(id)
-            .orElseThrow(() -> new RuntimeException("Picture not found."));
+            .orElseThrow(() -> new ResourceNotFoundException("Picture not found."));
 
     assertOwnership(picture);
 

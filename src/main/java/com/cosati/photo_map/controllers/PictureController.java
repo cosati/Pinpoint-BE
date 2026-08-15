@@ -61,7 +61,7 @@ public class PictureController {
     try {
       picture = objectMapper.readValue(pictureJson, Picture.class);
     } catch (JsonProcessingException e) {
-      return ResponseEntity.badRequest().build();
+      throw new IllegalArgumentException("Malformed picture JSON.");
     }
     return ResponseEntity.ok(
         pictureService.convertToDTO(pictureService.savePictureWithImage(picture, file)));
@@ -75,7 +75,7 @@ public class PictureController {
     try {
       picture = objectMapper.readValue(pictureJson, Picture.class);
     } catch (JsonProcessingException e) {
-      return ResponseEntity.badRequest().build();
+      throw new IllegalArgumentException("Malformed picture JSON.");
     }
     return ResponseEntity.ok(pictureService.convertToDTO(pictureService.updatePicture(picture)));
   }
