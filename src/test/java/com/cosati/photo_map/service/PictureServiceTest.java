@@ -1,5 +1,6 @@
 package com.cosati.photo_map.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +26,13 @@ import com.cosati.photo_map.domain.FileData;
 import com.cosati.photo_map.domain.Geolocation;
 import com.cosati.photo_map.domain.Picture;
 import com.cosati.photo_map.domain.Pin;
+import com.cosati.photo_map.domain.User;
 import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.dto.GeolocationDTO;
 import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
+import com.cosati.photo_map.dto.UserDTO;
+import com.cosati.photo_map.exceptions.ForbiddenOperationException;
 import com.cosati.photo_map.repository.PictureRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +46,10 @@ public class PictureServiceTest {
   private static final UUID DEFAULT_GEOLOCATION_ID = UUID.randomUUID();
   private static final UUID DEFAULT_POST_ID = UUID.randomUUID();
   private static final UUID PIN_ID = UUID.randomUUID();
+  private static final UUID USER_ID = UUID.randomUUID();
+  private static final UUID OWNER_ID = UUID.randomUUID();
+  private static final UUID OTHER_USER_ID = UUID.randomUUID();
+  private static final UUID PICTURE_ID = UUID.randomUUID();
 
   private static final String PIN_FILE_NAME = "blue.svg";
   private static final String PIN_COLOR = "BLUE";
@@ -50,6 +59,7 @@ public class PictureServiceTest {
   private static final String DEFAULT_API_RESOURCE = "api/resource";
   private static final String DEFAULT_FILE_PATH = "directory/path";
   private static final String DEFAULT_FILE_NAME = "file name";
+  private static final String USER_DISPLAY_NAME = "user";
 
   private static final BigDecimal DEFAULT_LONGITUDE = new BigDecimal(2.29);
   private static final BigDecimal DEFAULT_LATITUDE = new BigDecimal(48.85);
@@ -63,6 +73,8 @@ public class PictureServiceTest {
 
   @Mock private PictureRepository pictureRepository;
 
+  @Mock private AuthenticatedUserProvider userProvider;
+
   @InjectMocks private PictureService pictureService;
 
   @BeforeEach
@@ -72,6 +84,8 @@ public class PictureServiceTest {
 
   @Test
   void savePictureWithImage_savesToFileSystem_returnsPicture() throws IOException {
+    when(userProvider.getCurrentUser())
+        .thenReturn(User.builder().id(UUID.randomUUID()).displayName("username").build());
     FileData fileData = new FileData(DEFAULT_FILE_PATH, DEFAULT_FILE_TYPE, DEFAULT_FILE_NAME);
     Picture picture =
         Picture.builder()
@@ -101,6 +115,8 @@ public class PictureServiceTest {
   void savePictureWithImage_failsSaveToFileSystem_returnsNull() throws IOException {
     when(storageService.uploadImageToFileSystem(any()))
         .thenThrow(new IOException("File upload Error"));
+    when(userProvider.getCurrentUser())
+        .thenReturn(User.builder().id(UUID.randomUUID()).displayName("username").build());
     Picture picture =
         Picture.builder()
             .id(DEFAULT_POST_ID)
@@ -139,6 +155,7 @@ public class PictureServiceTest {
     Pin pin = Pin.builder().id(PIN_ID).color(PIN_COLOR).fileName(PIN_FILE_NAME).build();
     PinDTO pinDTO = new PinDTO(PIN_ID, PIN_COLOR, PIN_FILE_NAME, "/pins/icons/");
     when(pinService.convertToDTO(pin)).thenReturn(pinDTO);
+    UserDTO userDTO = new UserDTO(USER_ID, USER_DISPLAY_NAME);
     PictureDTO expectedDTO =
         new PictureDTO(
             DEFAULT_POST_ID,
@@ -147,7 +164,8 @@ public class PictureServiceTest {
             DEFAULT_DATE,
             geolocationDTO,
             fileDataDTO,
-            pinDTO);
+            pinDTO,
+            userDTO);
     Picture picture =
         Picture.builder()
             .id(DEFAULT_POST_ID)
@@ -162,10 +180,41 @@ public class PictureServiceTest {
                     .build())
             .fileData(new FileData(DEFAULT_FILE_PATH, DEFAULT_FILE_TYPE, DEFAULT_FILE_NAME))
             .pin(pin)
+            .user(User.builder().id(USER_ID).displayName(USER_DISPLAY_NAME).build())
             .build();
 
     PictureDTO pictureDTO = pictureService.convertToDTO(picture);
 
     assertEquals(pictureDTO, expectedDTO);
+  }
+
+  @Test
+  void updatePicture_notOwner_throwsForbidden() {
+    User owner = User.builder().id(OWNER_ID).build();
+    User otherUser = User.builder().id(OTHER_USER_ID).build();
+    Picture existingPicture = Picture.builder().id(PICTURE_ID).user(owner).build();
+    when(pictureRepository.findById(PICTURE_ID)).thenReturn(Optional.of(existingPicture));
+    when(userProvider.getCurrentUser()).thenReturn(otherUser);
+
+    Picture updateRequest = Picture.builder().id(PICTURE_ID).build();
+
+    assertThatThrownBy(() -> pictureService.updatePicture(updateRequest))
+        .isInstanceOf(ForbiddenOperationException.class);
+
+    verify(pictureRepository, never()).save(any());
+  }
+
+  @Test
+  void deletePicture_notOwner_throwsForbidden_doesNotDelete() {
+    User owner = User.builder().id(OWNER_ID).build();
+    User otherUser = User.builder().id(OTHER_USER_ID).build();
+    Picture existingPicture = Picture.builder().id(PICTURE_ID).user(owner).build();
+    when(pictureRepository.findById(PICTURE_ID)).thenReturn(Optional.of(existingPicture));
+    when(userProvider.getCurrentUser()).thenReturn(otherUser);
+
+    assertThatThrownBy(() -> pictureService.deletePicture(PICTURE_ID))
+        .isInstanceOf(ForbiddenOperationException.class);
+
+    verify(pictureRepository, never()).deleteById(any());
   }
 }

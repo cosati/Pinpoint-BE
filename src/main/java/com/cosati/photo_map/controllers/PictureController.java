@@ -82,8 +82,7 @@ public class PictureController {
 
   @DeleteMapping("/picture/{id}")
   public ResponseEntity<Void> deletePicture(@PathVariable("id") UUID id) {
-    repository.findById(id).ifPresent(picture -> picture.getFileData().getId());
-    repository.deleteById(id);
+    pictureService.deletePicture(id);
     return ResponseEntity.noContent().build();
   }
 }
