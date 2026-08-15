@@ -3,20 +3,19 @@ package com.cosati.photo_map.controllers;
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.cosati.photo_map.domain.User;
 import com.cosati.photo_map.dto.LoginRequest;
+import com.cosati.photo_map.dto.LoginResult;
 import com.cosati.photo_map.dto.RegisterRequest;
-import com.cosati.photo_map.exceptions.EmailAlreadyRegisteredException;
-import com.cosati.photo_map.repository.UserRepository;
+import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.security.JwtService;
+import com.cosati.photo_map.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
@@ -24,62 +23,38 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-  @Autowired private UserRepository userRepository;
-
-  @Autowired private PasswordEncoder passwordEncoder;
-
   @Autowired private JwtService jwtService;
 
+  @Autowired private AuthService authService;
+
   @PostMapping("/register")
-  public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
-    if (userRepository.findByEmail(req.email()).isPresent()) {
-      throw new EmailAlreadyRegisteredException("Email already registered");
-    }
-    User user =
-        User.builder()
-            .email(req.email())
-            .passwordHash(passwordEncoder.encode(req.password()))
-            .displayName(req.displayName())
-            .build();
-    userRepository.save(user);
-    return ResponseEntity.ok().build();
+  public ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterRequest req) {
+    UserDTO created = authService.registerNewUser(req);
+    return ResponseEntity.status(HttpStatus.CREATED).body(created);
   }
 
   @PostMapping("/login")
-  public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req, HttpServletResponse response) {
-    User user =
-        userRepository
-            .findByEmail(req.email())
-            .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
-    if (!passwordEncoder.matches(req.password(), user.getPasswordHash())) {
-      throw new BadCredentialsException("Invalid credentials");
-    }
-    String token = jwtService.generateToken(user);
-
-    ResponseCookie cookie =
-        ResponseCookie.from("auth_token", token)
-            .httpOnly(true)
-            .secure(true)
-            .sameSite("Lax")
-            .path("/")
-            .maxAge(Duration.ofDays(0))
-            .build();
-
-    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-    return ResponseEntity.ok().build();
+  public ResponseEntity<UserDTO> login(
+      @Valid @RequestBody LoginRequest req, HttpServletResponse response) {
+    LoginResult result = authService.login(req);
+    response.addHeader(
+        HttpHeaders.SET_COOKIE, authCookie(result.token(), jwtService.getExpiration()).toString());
+    return ResponseEntity.ok(result.user());
   }
 
   @PostMapping("/logout")
-  public ResponseEntity<?> logout(HttpServletResponse response) {
-    ResponseCookie cookie =
-        ResponseCookie.from("auth_token", "")
-            .httpOnly(true)
-            .secure(true)
-            .sameSite("Lax")
-            .path("/")
-            .maxAge(0)
-            .build();
-    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-    return ResponseEntity.ok().build();
+  public ResponseEntity<Void> logout(HttpServletResponse response) {
+    response.addHeader(HttpHeaders.SET_COOKIE, authCookie("", Duration.ZERO).toString());
+    return ResponseEntity.noContent().build();
+  }
+
+  private ResponseCookie authCookie(String value, Duration maxAge) {
+    return ResponseCookie.from("auth_token", value)
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Lax")
+        .path("/")
+        .maxAge(maxAge)
+        .build();
   }
 }
