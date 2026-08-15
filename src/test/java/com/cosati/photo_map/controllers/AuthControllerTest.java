@@ -25,6 +25,7 @@ import com.cosati.photo_map.dto.LoginResult;
 import com.cosati.photo_map.dto.RegisterRequest;
 import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.exceptions.EmailAlreadyRegisteredException;
+import com.cosati.photo_map.exceptions.UsernameAlreadyTakenException;
 import com.cosati.photo_map.repository.UserRepository;
 import com.cosati.photo_map.security.JwtService;
 import com.cosati.photo_map.service.AuthService;
@@ -88,6 +89,21 @@ public class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(req)))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.message").value("Email already registered"));
+  }
+
+  @Test
+  void register_withExistingDisplayName_shouldReturnConflict() throws Exception {
+    RegisterRequest req = new RegisterRequest("user@example.com", "password123", "Jane Doe");
+    when(authService.registerNewUser(any(RegisterRequest.class)))
+        .thenThrow(new UsernameAlreadyTakenException("Username already taken"));
+
+    mockMvc
+        .perform(
+            post("/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(req)))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.message").value("Username already taken"));
   }
 
   @Test

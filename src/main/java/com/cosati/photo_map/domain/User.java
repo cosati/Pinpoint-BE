@@ -26,5 +26,6 @@ public class User {
   @Column(nullable = false)
   private String passwordHash;
   
+  @Column(unique = true, nullable = false)
   private String displayName;
 }

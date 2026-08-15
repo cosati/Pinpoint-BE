@@ -31,6 +31,11 @@ public class GlobalExceptionHandler {
     return build(HttpStatus.CONFLICT, ex.getMessage(), null);
   }
 
+  @ExceptionHandler(UsernameAlreadyTakenException.class)
+  public ResponseEntity<ErrorResponse> handleConflict(UsernameAlreadyTakenException ex) {
+    return build(HttpStatus.CONFLICT, ex.getMessage(), null);
+  }
+
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
     return build(HttpStatus.UNAUTHORIZED, "Invalid email or password.", null);

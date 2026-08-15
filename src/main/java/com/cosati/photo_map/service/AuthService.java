@@ -10,6 +10,7 @@ import com.cosati.photo_map.dto.LoginResult;
 import com.cosati.photo_map.dto.RegisterRequest;
 import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.exceptions.EmailAlreadyRegisteredException;
+import com.cosati.photo_map.exceptions.UsernameAlreadyTakenException;
 import com.cosati.photo_map.repository.UserRepository;
 import com.cosati.photo_map.security.JwtService;
 
@@ -25,6 +26,9 @@ public class AuthService {
   public UserDTO registerNewUser(RegisterRequest req) {
     if (userRepository.findByEmail(req.email()).isPresent()) {
       throw new EmailAlreadyRegisteredException("Email already registered");
+    }
+    if (userRepository.findByDisplayName(req.displayName()).isPresent()) {
+      throw new UsernameAlreadyTakenException("Username already taken");
     }
     User user =
         User.builder()

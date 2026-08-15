@@ -23,6 +23,7 @@ import com.cosati.photo_map.dto.LoginResult;
 import com.cosati.photo_map.dto.RegisterRequest;
 import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.exceptions.EmailAlreadyRegisteredException;
+import com.cosati.photo_map.exceptions.UsernameAlreadyTakenException;
 import com.cosati.photo_map.repository.UserRepository;
 import com.cosati.photo_map.security.JwtService;
 
@@ -60,6 +61,7 @@ public class AuthServiceTest {
   void registerNewUser_withNewEmail_shouldSaveAndReturnUserDTO() {
     RegisterRequest req = new RegisterRequest(EMAIL, PASSWORD, DISPLAY_NAME);
     when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+    when(userRepository.findByDisplayName(DISPLAY_NAME)).thenReturn(Optional.empty());
     when(passwordEncoder.encode(PASSWORD)).thenReturn(PASSWORD_HASH);
     when(userRepository.save(any(User.class))).thenReturn(existingUser);
 
@@ -84,6 +86,19 @@ public class AuthServiceTest {
     assertThatThrownBy(() -> authService.registerNewUser(req))
         .isInstanceOf(EmailAlreadyRegisteredException.class)
         .hasMessage("Email already registered");
+
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void registerNewUser_withExistingDisplayName_shouldThrowAndNotSave() {
+    RegisterRequest req = new RegisterRequest(EMAIL, PASSWORD, DISPLAY_NAME);
+    when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+    when(userRepository.findByDisplayName(DISPLAY_NAME)).thenReturn(Optional.of(existingUser));
+
+    assertThatThrownBy(() -> authService.registerNewUser(req))
+        .isInstanceOf(UsernameAlreadyTakenException.class)
+        .hasMessage("Username already taken");
 
     verify(userRepository, never()).save(any(User.class));
   }
