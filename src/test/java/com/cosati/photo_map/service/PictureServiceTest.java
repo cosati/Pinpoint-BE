@@ -1,5 +1,6 @@
 package com.cosati.photo_map.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +32,7 @@ import com.cosati.photo_map.dto.GeolocationDTO;
 import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.dto.UserDTO;
+import com.cosati.photo_map.exceptions.ForbiddenOperationException;
 import com.cosati.photo_map.repository.PictureRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,6 +47,9 @@ public class PictureServiceTest {
   private static final UUID DEFAULT_POST_ID = UUID.randomUUID();
   private static final UUID PIN_ID = UUID.randomUUID();
   private static final UUID USER_ID = UUID.randomUUID();
+  private static final UUID OWNER_ID = UUID.randomUUID();
+  private static final UUID OTHER_USER_ID = UUID.randomUUID();
+  private static final UUID PICTURE_ID = UUID.randomUUID();
 
   private static final String PIN_FILE_NAME = "blue.svg";
   private static final String PIN_COLOR = "BLUE";
@@ -180,5 +186,35 @@ public class PictureServiceTest {
     PictureDTO pictureDTO = pictureService.convertToDTO(picture);
 
     assertEquals(pictureDTO, expectedDTO);
+  }
+
+  @Test
+  void updatePicture_notOwner_throwsForbidden() {
+    User owner = User.builder().id(OWNER_ID).build();
+    User otherUser = User.builder().id(OTHER_USER_ID).build();
+    Picture existingPicture = Picture.builder().id(PICTURE_ID).user(owner).build();
+    when(pictureRepository.findById(PICTURE_ID)).thenReturn(Optional.of(existingPicture));
+    when(userProvider.getCurrentUser()).thenReturn(otherUser);
+
+    Picture updateRequest = Picture.builder().id(PICTURE_ID).build();
+
+    assertThatThrownBy(() -> pictureService.updatePicture(updateRequest))
+        .isInstanceOf(ForbiddenOperationException.class);
+
+    verify(pictureRepository, never()).save(any());
+  }
+
+  @Test
+  void deletePicture_notOwner_throwsForbidden_doesNotDelete() {
+    User owner = User.builder().id(OWNER_ID).build();
+    User otherUser = User.builder().id(OTHER_USER_ID).build();
+    Picture existingPicture = Picture.builder().id(PICTURE_ID).user(owner).build();
+    when(pictureRepository.findById(PICTURE_ID)).thenReturn(Optional.of(existingPicture));
+    when(userProvider.getCurrentUser()).thenReturn(otherUser);
+
+    assertThatThrownBy(() -> pictureService.deletePicture(PICTURE_ID))
+        .isInstanceOf(ForbiddenOperationException.class);
+
+    verify(pictureRepository, never()).deleteById(any());
   }
 }

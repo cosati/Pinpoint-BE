@@ -1,20 +1,21 @@
 package com.cosati.photo_map.service;
 
 import java.io.IOException;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cosati.photo_map.domain.FileData;
 import com.cosati.photo_map.domain.Geolocation;
 import com.cosati.photo_map.domain.Picture;
+import com.cosati.photo_map.domain.User;
 import com.cosati.photo_map.dto.FileDataDTO;
 import com.cosati.photo_map.dto.GeolocationDTO;
 import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.dto.UserDTO;
+import com.cosati.photo_map.exceptions.ForbiddenOperationException;
 import com.cosati.photo_map.repository.PictureRepository;
 
 @Service
@@ -44,11 +45,25 @@ public class PictureService {
         pictureRepository
             .findById(picture.getId())
             .orElseThrow(() -> new RuntimeException("Picture not found."));
+    
+    assertOwnership(pictureToUpdate);
+    
     pictureToUpdate.setDateTaken(picture.getDateTaken());
     pictureToUpdate.setDescription(picture.getDescription());
     pictureToUpdate.setPin(picture.getPin());
     pictureToUpdate.setTitle(picture.getTitle());
     return pictureRepository.save(pictureToUpdate);
+  }
+  
+  public void deletePicture(UUID id) {
+    Picture picture =
+        pictureRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Picture not found."));
+
+    assertOwnership(picture);
+
+    pictureRepository.deleteById(id);
   }
 
   public PictureDTO convertToDTO(Picture picture) {
@@ -72,5 +87,12 @@ public class PictureService {
         fileDataDto,
         pinDto,
         user);
+  }
+  
+  private void assertOwnership(Picture picture) {
+    User currentUser = userProvider.getCurrentUser();
+    if (!picture.getUser().getId().equals(currentUser.getId())) {
+      throw new ForbiddenOperationException("You do not have permission to modify this picture.");
+    }
   }
 }
