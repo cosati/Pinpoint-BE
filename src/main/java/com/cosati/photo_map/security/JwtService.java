@@ -1,6 +1,7 @@
 package com.cosati.photo_map.security;
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,10 @@ public class JwtService {
       @Value("${jwt.expiration-days:7}") long expirationDays) {
     this.signingKey = Keys.hmacShaKeyFor(secret.getBytes());
     this.expirationMillis = expirationDays * 24 * 60 * 60 * 1000;
+  }
+
+  public Duration getExpiration() {
+    return Duration.ofMillis(expirationMillis);
   }
 
   public String generateToken(User user) {
