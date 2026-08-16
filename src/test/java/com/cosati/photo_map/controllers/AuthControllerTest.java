@@ -3,13 +3,16 @@ package com.cosati.photo_map.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,9 +20,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cosati.photo_map.domain.User;
 import com.cosati.photo_map.dto.LoginRequest;
 import com.cosati.photo_map.dto.LoginResult;
 import com.cosati.photo_map.dto.RegisterRequest;
@@ -45,6 +51,11 @@ public class AuthControllerTest {
   @MockBean private PasswordEncoder passwordEncoder;
 
   @MockBean private JwtService jwtService;
+
+  @AfterEach
+  void clearSecurityContext() {
+    SecurityContextHolder.clearContext();
+  }
 
   @Test
   void register_withValidRequest_shouldReturnCreatedUser() throws Exception {
@@ -147,5 +158,25 @@ public class AuthControllerTest {
         .andExpect(status().isNoContent())
         .andExpect(cookie().maxAge("auth_token", 0))
         .andExpect(content().string(""));
+  }
+
+  @Test
+  void me_withAuthenticatedUser_shouldReturnUser() throws Exception {
+    User user = User.builder().id(UUID.randomUUID()).displayName("Jane Doe").build();
+    var auth = new UsernamePasswordAuthenticationToken(user, null, List.of());
+    SecurityContextHolder.getContext().setAuthentication(auth);
+
+    // addFilters = false means no filter wraps the request to expose the principal, so the
+    // Authentication argument (resolved via request.getUserPrincipal()) has to be set directly.
+    mockMvc
+        .perform(get("/auth/me").principal(auth))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(user.getId().toString()))
+        .andExpect(jsonPath("$.username").value("Jane Doe"));
+  }
+
+  @Test
+  void me_withNoAuthentication_shouldReturnUnauthorized() throws Exception {
+    mockMvc.perform(get("/auth/me")).andExpect(status().isUnauthorized());
   }
 }
