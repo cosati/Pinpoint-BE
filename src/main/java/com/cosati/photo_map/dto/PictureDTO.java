@@ -31,6 +31,7 @@ public class PictureDTO {
     this.geolocation = geolocation;
     this.fileData = fileData;
     this.pin = pin;
+    this.user = user;
   }
 
   public UserDTO getUser() {
