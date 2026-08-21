@@ -3,7 +3,6 @@ package com.cosati.photo_map.controllers;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +31,10 @@ public class PictureController {
 
   @Autowired private PictureService pictureService;
 
-  @GetMapping("/pictures")
-  public ResponseEntity<List<PictureDTO>> getPictures() {
-    return ResponseEntity.ok(
-        repository
-            .findAll()
-            .stream()
-            .map(pictureService::convertToDTO)
-            .collect(Collectors.toList()));
+  @GetMapping("/users/{username}/pictures")
+  public ResponseEntity<List<PictureDTO>> getPicturesForUser(
+      @PathVariable("username") String username) {
+    return ResponseEntity.ok(pictureService.getPicturesForUsername(username));
   }
 
   @GetMapping("/picture/{id}")

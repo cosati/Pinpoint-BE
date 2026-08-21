@@ -1,5 +1,6 @@
 package com.cosati.photo_map.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -10,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +35,9 @@ import com.cosati.photo_map.dto.PictureDTO;
 import com.cosati.photo_map.dto.PinDTO;
 import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.exceptions.ForbiddenOperationException;
+import com.cosati.photo_map.exceptions.ResourceNotFoundException;
 import com.cosati.photo_map.repository.PictureRepository;
+import com.cosati.photo_map.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -72,6 +76,8 @@ public class PictureServiceTest {
   @Mock private PinService pinService;
 
   @Mock private PictureRepository pictureRepository;
+
+  @Mock private UserRepository userRepository;
 
   @Mock private AuthenticatedUserProvider userProvider;
 
@@ -216,5 +222,90 @@ public class PictureServiceTest {
         .isInstanceOf(ForbiddenOperationException.class);
 
     verify(pictureRepository, never()).deleteById(any());
+  }
+
+  @Test
+  void getPicturesForUsername_publicMap_anonymousViewer_returnsPictures() {
+    User owner = User.builder().id(OWNER_ID).displayName(USER_DISPLAY_NAME).isPublic(true).build();
+    when(userRepository.findByDisplayName(USER_DISPLAY_NAME)).thenReturn(Optional.of(owner));
+    when(userProvider.getCurrentUserOptional()).thenReturn(Optional.empty());
+    when(pictureRepository.findByUser(owner)).thenReturn(List.of());
+
+    List<PictureDTO> pictures = pictureService.getPicturesForUsername(USER_DISPLAY_NAME);
+
+    assertThat(pictures).isEmpty();
+  }
+
+  @Test
+  void getPicturesForUsername_privateMap_owner_returnsPictures() {
+    User owner = User.builder().id(OWNER_ID).displayName(USER_DISPLAY_NAME).isPublic(false).build();
+    when(userRepository.findByDisplayName(USER_DISPLAY_NAME)).thenReturn(Optional.of(owner));
+    when(userProvider.getCurrentUserOptional()).thenReturn(Optional.of(owner));
+    when(pictureRepository.findByUser(owner)).thenReturn(List.of());
+
+    List<PictureDTO> pictures = pictureService.getPicturesForUsername(USER_DISPLAY_NAME);
+
+    assertThat(pictures).isEmpty();
+  }
+
+  @Test
+  void getPicturesForUsername_privateMap_otherUser_throwsNotFound() {
+    User owner = User.builder().id(OWNER_ID).displayName(USER_DISPLAY_NAME).isPublic(false).build();
+    User otherUser = User.builder().id(OTHER_USER_ID).build();
+    when(userRepository.findByDisplayName(USER_DISPLAY_NAME)).thenReturn(Optional.of(owner));
+    when(userProvider.getCurrentUserOptional()).thenReturn(Optional.of(otherUser));
+
+    assertThatThrownBy(() -> pictureService.getPicturesForUsername(USER_DISPLAY_NAME))
+        .isInstanceOf(ResourceNotFoundException.class);
+
+    verify(pictureRepository, never()).findByUser(any());
+  }
+
+  @Test
+  void getPicturesForUsername_privateMap_anonymousViewer_throwsNotFound() {
+    User owner = User.builder().id(OWNER_ID).displayName(USER_DISPLAY_NAME).isPublic(false).build();
+    when(userRepository.findByDisplayName(USER_DISPLAY_NAME)).thenReturn(Optional.of(owner));
+    when(userProvider.getCurrentUserOptional()).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> pictureService.getPicturesForUsername(USER_DISPLAY_NAME))
+        .isInstanceOf(ResourceNotFoundException.class);
+
+    verify(pictureRepository, never()).findByUser(any());
+  }
+
+  @Test
+  void getPicturesForUsername_unknownUsername_throwsNotFound() {
+    when(userRepository.findByDisplayName(USER_DISPLAY_NAME)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> pictureService.getPicturesForUsername(USER_DISPLAY_NAME))
+        .isInstanceOf(ResourceNotFoundException.class);
+
+    verify(pictureRepository, never()).findByUser(any());
+  }
+
+  @Test
+  void getPicturesForUsername_privateNoAccessAndUnknownUsername_sameMessage() {
+    User owner = User.builder().id(OWNER_ID).displayName(USER_DISPLAY_NAME).isPublic(false).build();
+    when(userRepository.findByDisplayName(USER_DISPLAY_NAME)).thenReturn(Optional.of(owner));
+    when(userProvider.getCurrentUserOptional()).thenReturn(Optional.empty());
+
+    String privateMessage =
+        catchResourceNotFoundMessage(() -> pictureService.getPicturesForUsername(USER_DISPLAY_NAME));
+
+    when(userRepository.findByDisplayName("nobody")).thenReturn(Optional.empty());
+
+    String unknownMessage =
+        catchResourceNotFoundMessage(() -> pictureService.getPicturesForUsername("nobody"));
+
+    assertEquals(privateMessage, unknownMessage);
+  }
+
+  private String catchResourceNotFoundMessage(Runnable action) {
+    try {
+      action.run();
+    } catch (ResourceNotFoundException e) {
+      return e.getMessage();
+    }
+    throw new AssertionError("Expected ResourceNotFoundException to be thrown.");
   }
 }
