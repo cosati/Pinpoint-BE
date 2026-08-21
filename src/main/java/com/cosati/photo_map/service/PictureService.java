@@ -1,7 +1,9 @@
 package com.cosati.photo_map.service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,17 +20,46 @@ import com.cosati.photo_map.dto.UserDTO;
 import com.cosati.photo_map.exceptions.ForbiddenOperationException;
 import com.cosati.photo_map.exceptions.ResourceNotFoundException;
 import com.cosati.photo_map.repository.PictureRepository;
+import com.cosati.photo_map.repository.UserRepository;
 
 @Service
 public class PictureService {
 
+  private static final String MAP_NOT_FOUND_MESSAGE = "Map not found.";
+
   @Autowired private PictureRepository pictureRepository;
+
+  @Autowired private UserRepository userRepository;
 
   @Autowired private StorageService storageService;
 
   @Autowired private PinService pinService;
-  
+
   @Autowired private AuthenticatedUserProvider userProvider;
+
+  public List<PictureDTO> getPicturesForUsername(String username) {
+    User owner =
+        userRepository
+            .findByDisplayName(username)
+            .orElseThrow(() -> new ResourceNotFoundException(MAP_NOT_FOUND_MESSAGE));
+
+    boolean isOwner =
+        userProvider
+            .getCurrentUserOptional()
+            .map(currentUser -> currentUser.getId().equals(owner.getId()))
+            .orElse(false);
+
+    if (!owner.isPublic() && !isOwner) {
+      // Same exception/message as "username doesn't exist" above, so the
+      // response can't be used to tell private maps and unregistered
+      // usernames apart.
+      throw new ResourceNotFoundException(MAP_NOT_FOUND_MESSAGE);
+    }
+
+    return pictureRepository.findByUser(owner).stream()
+        .map(this::convertToDTO)
+        .collect(Collectors.toList());
+  }
 
   public Picture savePictureWithImage(Picture picture, MultipartFile file) {
     picture.setUser(userProvider.getCurrentUser());

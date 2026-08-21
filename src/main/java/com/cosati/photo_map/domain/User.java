@@ -28,4 +28,8 @@ public class User {
   
   @Column(unique = true, nullable = false)
   private String displayName;
+
+  @Column(name = "is_public", nullable = false, columnDefinition = "boolean default true")
+  @Builder.Default
+  private boolean isPublic = true;
 }
